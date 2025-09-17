@@ -6,8 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app
 
-# Create app user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Note: Running as root for volume mount compatibility
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -31,15 +30,10 @@ RUN python -m spacy download en_core_web_lg
 # Copy application code
 COPY app/ ./app/
 
-# Create directories for data and logs with proper permissions
-RUN mkdir -p /app/data /app/logs && \
-    chmod 755 /app/data /app/logs
+# Create directories for data and logs
+RUN mkdir -p /app/data /app/logs
 
-# Change ownership to app user
-RUN chown -R appuser:appuser /app
-
-# Switch to non-root user
-USER appuser
+# Note: Staying as root for volume mount write access
 
 # Expose port
 EXPOSE 8000

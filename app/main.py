@@ -34,17 +34,22 @@ console_formatter = jsonlogger.JsonFormatter(
 console_handler.setFormatter(console_formatter)
 root_logger.addHandler(console_handler)
 
-# File handler with rotation
-file_handler = RotatingFileHandler(
-    settings.log_file_path,
-    maxBytes=settings.log_max_bytes,
-    backupCount=settings.log_backup_count
-)
-file_formatter = jsonlogger.JsonFormatter(
-    fmt='%(asctime)s %(name)s %(levelname)s %(message)s'
-)
-file_handler.setFormatter(file_formatter)
-root_logger.addHandler(file_handler)
+# File handler with rotation (with fallback)
+try:
+    file_handler = RotatingFileHandler(
+        settings.log_file_path,
+        maxBytes=settings.log_max_bytes,
+        backupCount=settings.log_backup_count
+    )
+    file_formatter = jsonlogger.JsonFormatter(
+        fmt='%(asctime)s %(name)s %(levelname)s %(message)s'
+    )
+    file_handler.setFormatter(file_formatter)
+    root_logger.addHandler(file_handler)
+    print(f"File logging enabled: {settings.log_file_path}")
+except Exception as e:
+    print(f"Warning: Could not create file handler at {settings.log_file_path}: {e}")
+    print("Continuing with console logging only")
 
 logger = logging.getLogger(__name__)
 
