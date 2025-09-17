@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  prime-anonymizer:
+    build: .
+    expose:
+      - 8000
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - VIRTUAL_HOST=prime.rnd.2bv.io
+      - VIRTUAL_PORT=8000
+      - LETSENCRYPT_HOST=prime.rnd.2bv.io
+      - LETSENCRYPT_EMAIL=admin@2bv.io
+      - ANONYMIZER_LOG_LEVEL=INFO
+      - ANONYMIZER_DB_PATH=/app/data/app.db
+      - ANONYMIZER_LOG_FILE_PATH=/app/logs/app.log
+    networks:
+      - nginx-proxy
+      - default
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/anonymize", "-X", "POST", "-H", "Content-Type: application/json", "-d", "{\"test\": \"health\"}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  nginx-proxy:
+    external: true
