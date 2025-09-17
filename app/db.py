@@ -2,6 +2,7 @@
 
 import json
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Dict, Generator, Optional
 
 from sqlalchemy import create_engine
@@ -19,9 +20,13 @@ class DatabaseManager:
         self.settings = get_settings()
         ensure_directories()
 
+        # Ensure database file path is absolute and directory exists
+        db_path = Path(self.settings.db_path).resolve()
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+
         # Create SQLite engine with thread safety
         self.engine = create_engine(
-            f"sqlite:///{self.settings.db_path}",
+            f"sqlite:///{db_path}",
             connect_args={"check_same_thread": False},
             echo=False,
         )
