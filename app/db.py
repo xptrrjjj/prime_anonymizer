@@ -17,12 +17,30 @@ class DatabaseManager:
 
     def __init__(self) -> None:
         """Initialize database manager."""
+        import logging
+        logger = logging.getLogger(__name__)
+
         self.settings = get_settings()
         ensure_directories()
 
         # Ensure database file path is absolute and directory exists
         db_path = Path(self.settings.db_path).resolve()
-        db_path.parent.mkdir(parents=True, exist_ok=True)
+
+        try:
+            db_path.parent.mkdir(parents=True, exist_ok=True)
+            logger.info(f"Database directory created: {db_path.parent}")
+
+            # Test write permissions by creating a temporary file
+            test_file = db_path.parent / "test_write.tmp"
+            test_file.touch()
+            test_file.unlink()
+            logger.info(f"Write permissions confirmed for: {db_path.parent}")
+
+        except Exception as e:
+            logger.error(f"Cannot create database directory or write to {db_path.parent}: {e}")
+            # Fallback to /tmp
+            db_path = Path("/tmp/app.db")
+            logger.warning(f"Using fallback database path: {db_path}")
 
         # Create SQLite engine with thread safety
         self.engine = create_engine(
@@ -31,8 +49,13 @@ class DatabaseManager:
             echo=False,
         )
 
-        # Create tables
-        Base.metadata.create_all(bind=self.engine)
+        try:
+            # Create tables
+            Base.metadata.create_all(bind=self.engine)
+            logger.info(f"Database initialized successfully at: {db_path}")
+        except Exception as e:
+            logger.error(f"Failed to initialize database: {e}")
+            raise
 
         # Session factory
         self.SessionLocal = sessionmaker(

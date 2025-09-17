@@ -31,8 +31,9 @@ RUN python -m spacy download en_core_web_lg
 # Copy application code
 COPY app/ ./app/
 
-# Create directories for data and logs
-RUN mkdir -p /app/data /app/logs
+# Create directories for data and logs with proper permissions
+RUN mkdir -p /app/data /app/logs && \
+    chmod 755 /app/data /app/logs
 
 # Change ownership to app user
 RUN chown -R appuser:appuser /app

@@ -10,10 +10,10 @@ class Settings(BaseSettings):
     """Application settings with environment variable support."""
 
     # Database settings
-    db_path: str = "./data/app.db"
+    db_path: str = "/app/data/app.db"
 
     # Logging settings
-    log_file_path: str = "./logs/app.log"
+    log_file_path: str = "/app/logs/app.log"
     log_max_bytes: int = 10 * 1024 * 1024  # 10MB
     log_backup_count: int = 5
     log_level: str = "INFO"
