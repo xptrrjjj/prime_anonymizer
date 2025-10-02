@@ -26,14 +26,7 @@ class Settings(BaseSettings):
     default_entities: List[str] = [
         "PERSON",
         "PHONE_NUMBER",
-        "EMAIL_ADDRESS",
-        "CREDIT_CARD",
-        "IBAN",
-        "US_SSN",
-        "LOCATION",
-        "DATE_TIME",
-        "IP_ADDRESS",
-        "URL"
+        "LOCATION"
     ]
 
     # spaCy model
