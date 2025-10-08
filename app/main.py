@@ -18,6 +18,7 @@ from app.anonymize import DeterministicCache
 from app.config import ensure_directories, get_settings
 from app.db import db_manager
 from app.traverse import anonymize_json_recursive, validate_json_structure
+from app.endpoints_advanced import router as advanced_router
 
 # Setup logging
 ensure_directories()
@@ -228,6 +229,9 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
 # Add middleware
 app.add_middleware(LoggingMiddleware)
+
+# Include advanced endpoints router
+app.include_router(advanced_router, tags=["Advanced PII Detection"])
 
 
 @app.post("/anonymize")

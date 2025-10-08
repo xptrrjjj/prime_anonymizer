@@ -38,9 +38,9 @@ RUN mkdir -p /app/data /app/logs
 # Expose port
 EXPOSE 8000
 
-# Health check
+# Health check - using /entities endpoint for simpler GET request
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/anonymize -X POST -H "Content-Type: application/json" -d '{"test": "health"}' || exit 1
+    CMD curl -f http://localhost:8000/entities || exit 1
 
 # Run the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
