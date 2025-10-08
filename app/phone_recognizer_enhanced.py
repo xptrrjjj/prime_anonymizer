@@ -11,10 +11,17 @@ class EnhancedPhoneRecognizer(PatternRecognizer):
     Detects phone numbers in various formats:
     - US: +1-555-123-4567, (555) 123-4567, 555-123-4567, 555.123.4567
     - International: +44 20 7123 4567, +49 30 12345678
+    - Alphanumeric: 1-800-FLOWERS, +1-917-NINE88-2TWO2, 1-800-ZERO ZERO FIVE EIGHT
     - Flexible spacing and separators
     """
 
     PATTERNS = [
+        # Alphanumeric/word-based phone numbers: 1-800-FLOWERS, +1-917-NINE88-2TWO2, 1-800-ZERO ZERO FIVE EIGHT
+        Pattern(
+            name="phone_with_words_letters",
+            regex=r"(?:\+?\d{1,3}[-\s\.]?)?\d{1,4}[-\s\.]?[A-Za-z0-9][\sA-Za-z0-9-\.]{7,}",
+            score=0.75,
+        ),
         # US/International format with country code: +1-555-123-4567, +44 20 7123 4567
         Pattern(
             name="phone_with_plus_and_dashes",
