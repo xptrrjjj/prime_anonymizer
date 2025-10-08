@@ -8,6 +8,7 @@ from logging.handlers import RotatingFileHandler
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -60,6 +61,20 @@ app = FastAPI(
     version="1.0.0",
     docs_url=None,  # Disable docs to keep only /anonymize endpoint
     redoc_url=None,
+)
+
+# Configure CORS for frontend development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://prime.rnd.2bv.io",
+        "https://prime-ui.rnd.2bv.io"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
