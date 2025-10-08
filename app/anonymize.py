@@ -4,11 +4,12 @@ import hashlib
 import logging
 from typing import Dict, List, Optional, Tuple, Union
 
-from presidio_analyzer import AnalyzerEngine, RecognizerResult
+from presidio_analyzer import AnalyzerEngine, RecognizerResult, RecognizerRegistry
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
 from app.config import get_settings
+from app.phone_recognizer_enhanced import get_enhanced_phone_recognizer
 
 logger = logging.getLogger(__name__)
 
@@ -49,16 +50,33 @@ class AnonymizationEngine:
     """Presidio-based anonymization engine with caching."""
 
     def __init__(self) -> None:
-        """Initialize Presidio engines."""
+        """Initialize Presidio engines with enhanced phone recognizer."""
         self.settings = get_settings()
 
-        # Initialize Presidio analyzer
-        self.analyzer = AnalyzerEngine()
+        # Create recognizer registry with predefined recognizers
+        registry = RecognizerRegistry()
+        registry.load_predefined_recognizers()
+
+        # Replace default PhoneRecognizer with enhanced version
+        try:
+            # Remove default PhoneRecognizer if it exists
+            registry.remove_recognizer("PhoneRecognizer")
+            logger.info("Removed default PhoneRecognizer")
+        except Exception as e:
+            logger.warning(f"Could not remove default PhoneRecognizer: {e}")
+
+        # Add enhanced phone recognizer
+        enhanced_phone = get_enhanced_phone_recognizer()
+        registry.add_recognizer(enhanced_phone)
+        logger.info("Added enhanced PhoneRecognizer with custom patterns")
+
+        # Initialize Presidio analyzer with custom registry
+        self.analyzer = AnalyzerEngine(registry=registry)
 
         # Initialize Presidio anonymizer
         self.anonymizer = AnonymizerEngine()
 
-        logger.info("Presidio engines initialized successfully")
+        logger.info("Presidio engines initialized successfully with enhanced phone detection")
 
     def analyze_text(
         self,

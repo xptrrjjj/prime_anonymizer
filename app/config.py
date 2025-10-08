@@ -22,11 +22,57 @@ class Settings(BaseSettings):
     max_request_size: int = 2 * 1024 * 1024  # 2MiB
     request_timeout: float = 30.0  # seconds
 
-    # Presidio settings
+    # Presidio settings - ALL supported entity types
     default_entities: List[str] = [
+        # Global entities
         "PERSON",
         "PHONE_NUMBER",
-        "LOCATION"
+        "EMAIL_ADDRESS",
+        "CREDIT_CARD",
+        "CRYPTO",
+        "DATE_TIME",
+        "IBAN_CODE",
+        "IP_ADDRESS",
+        "LOCATION",
+        "NRP",
+        "MEDICAL_LICENSE",
+        "URL",
+        # US entities
+        "US_BANK_NUMBER",
+        "US_DRIVER_LICENSE",
+        "US_ITIN",
+        "US_PASSPORT",
+        "US_SSN",
+        # UK entities
+        "UK_NHS",
+        "UK_NINO",
+        # Australia entities
+        "AU_ABN",
+        "AU_ACN",
+        "AU_TFN",
+        "AU_MEDICARE",
+        # Singapore entities
+        "SG_NRIC_FIN",
+        "SG_UEN",
+        # Spain entities
+        "ES_NIF",
+        "ES_NIE",
+        # Italy entities
+        "IT_FISCAL_CODE",
+        "IT_DRIVER_LICENSE",
+        "IT_VAT_CODE",
+        "IT_PASSPORT",
+        "IT_IDENTITY_CARD",
+        # Poland entities
+        "PL_PESEL",
+        # India entities
+        "IN_PAN",
+        "IN_AADHAAR",
+        "IN_VEHICLE_REGISTRATION",
+        "IN_VOTER",
+        "IN_PASSPORT",
+        # Finland entities
+        "FI_PERSONAL_IDENTITY_CODE",
     ]
 
     # spaCy model
