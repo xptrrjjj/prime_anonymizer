@@ -129,11 +129,37 @@ async def analyze_text(request: AnalyzeRequest):
             }
 
             if request.return_decision_process and result.analysis_explanation:
-                finding["analysis_explanation"] = {
+                explanation = {
                     "recognizer": result.analysis_explanation.recognizer,
                     "original_score": result.analysis_explanation.original_score,
-                    "textual_explanation": result.analysis_explanation.textual_explanation
+                    "textual_explanation": result.analysis_explanation.textual_explanation,
                 }
+
+                # Add pattern name if available
+                if hasattr(result.analysis_explanation, 'pattern_name') and result.analysis_explanation.pattern_name:
+                    explanation["pattern_name"] = result.analysis_explanation.pattern_name
+
+                # Add regex pattern if available
+                if hasattr(result.analysis_explanation, 'pattern') and result.analysis_explanation.pattern:
+                    explanation["pattern"] = result.analysis_explanation.pattern
+
+                # Add validation result if available
+                if hasattr(result.analysis_explanation, 'validation_result') and result.analysis_explanation.validation_result is not None:
+                    explanation["validation_result"] = result.analysis_explanation.validation_result
+
+                # Add score context improvement if available
+                if hasattr(result.analysis_explanation, 'score_context_improvement') and result.analysis_explanation.score_context_improvement:
+                    explanation["score_context_improvement"] = result.analysis_explanation.score_context_improvement
+
+                # Add score (before final adjustments) if available
+                if hasattr(result.analysis_explanation, 'score') and result.analysis_explanation.score is not None:
+                    explanation["score"] = result.analysis_explanation.score
+
+                # Add supportive context word if available
+                if hasattr(result.analysis_explanation, 'supportive_context_word') and result.analysis_explanation.supportive_context_word:
+                    explanation["supportive_context_word"] = result.analysis_explanation.supportive_context_word
+
+                finding["analysis_explanation"] = explanation
 
             findings.append(finding)
             summary[result.entity_type] = summary.get(result.entity_type, 0) + 1
