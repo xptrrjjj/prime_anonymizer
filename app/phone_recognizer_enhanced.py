@@ -16,31 +16,37 @@ class EnhancedPhoneRecognizer(PatternRecognizer):
     """
 
     PATTERNS = [
-        # US format with parentheses: (555) 123-4567, (555)123-4567
-        Pattern(
-            name="phone_with_parens",
-            regex=r"\(?\d{3}\)?[-\s\.]?\d{3}[-\s\.]?\d{4}",
-            score=0.7,
-        ),
         # US/International format with country code: +1-555-123-4567, +44 20 7123 4567
         Pattern(
             name="phone_with_plus_and_dashes",
             regex=r"\+\d{1,3}[-\s\.]?\(?\d{1,4}\)?[-\s\.]?\d{1,4}[-\s\.]?\d{1,9}",
             score=0.7,
         ),
+        # US format WITH parentheses: (555) 123-4567, (555)123-4567
+        Pattern(
+            name="phone_with_parens",
+            regex=r"\(\d{3}\)[-\s\.]?\d{3}[-\s\.]?\d{4}",
+            score=0.7,
+        ),
         # Extension format: 555-1234 x123, 555-1234 ext. 123
         Pattern(
             name="phone_with_extension",
-            regex=r"\(?\d{3}\)?[-\s\.]?\d{3}[-\s\.]?\d{4}[-\s]?(?:x|ext\.?|extension)[-\s]?\d{1,5}",
+            regex=r"\d{3}[-\s\.]\d{3}[-\s\.]\d{4}[-\s]?(?:x|ext\.?|extension)[-\s]?\d{1,5}",
             score=0.7,
+        ),
+        # US format with required separators: 555-123-4567, 555.123.4567, 555 123 4567
+        Pattern(
+            name="phone_with_separators",
+            regex=r"\b\d{3}[-\s\.]\d{3}[-\s\.]\d{4}\b",
+            score=0.6,
         ),
         # Alphanumeric toll-free: 1-800-FLOWERS (must start with 1-800 or 1-888 or 1-877)
         Pattern(
             name="phone_tollfree_alpha",
             regex=r"\b1[-\s\.]?(?:800|888|877|866)[-\s\.]?[A-Z]{3,7}\b",
-            score=0.6,
+            score=0.5,
         ),
-        # Simple 7-digit format: 555-1234, 555.1234 (but only if has context word)
+        # Simple 7-digit format with required separator: 555-1234, 555.1234
         Pattern(
             name="phone_simple_seven_digit",
             regex=r"\b\d{3}[-\s\.]\d{4}\b",

@@ -156,6 +156,16 @@ async def analyze_text(request: AnalyzeRequest):
                             if value is not None:
                                 explanation[field] = value
 
+                # Generate textual_explanation if it's null or missing
+                if not explanation.get('textual_explanation'):
+                    recognizer = explanation.get('recognizer', 'Unknown')
+                    pattern_name = explanation.get('pattern_name')
+
+                    if pattern_name:
+                        explanation['textual_explanation'] = f"Identified as {result.entity_type} by {recognizer} using pattern `{pattern_name}`"
+                    else:
+                        explanation['textual_explanation'] = f"Identified as {result.entity_type} by {recognizer}"
+
                 finding["analysis_explanation"] = explanation
 
             findings.append(finding)
