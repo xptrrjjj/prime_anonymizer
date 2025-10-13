@@ -71,7 +71,8 @@ app.add_middleware(
         "http://localhost:3000",
         "http://localhost:3001",
         "https://prime.rnd.2bv.io",
-        "https://prime-ui.rnd.2bv.io"
+        "https://prime-ui.rnd.2bv.io",
+        "https://presidio-demo.rnd.2bv.io"
     ],
     allow_credentials=True,
     allow_methods=["*"],

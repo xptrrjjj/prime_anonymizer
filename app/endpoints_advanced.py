@@ -129,35 +129,32 @@ async def analyze_text(request: AnalyzeRequest):
             }
 
             if request.return_decision_process and result.analysis_explanation:
-                explanation = {
-                    "recognizer": result.analysis_explanation.recognizer,
-                    "original_score": result.analysis_explanation.original_score,
-                    "textual_explanation": result.analysis_explanation.textual_explanation,
-                }
+                # Use to_dict() method to get all available fields
+                if hasattr(result.analysis_explanation, 'to_dict'):
+                    explanation = result.analysis_explanation.to_dict()
+                else:
+                    # Fallback for older versions
+                    explanation = {
+                        "recognizer": result.analysis_explanation.recognizer,
+                        "original_score": result.analysis_explanation.original_score,
+                    }
 
-                # Add pattern name if available
-                if hasattr(result.analysis_explanation, 'pattern_name') and result.analysis_explanation.pattern_name:
-                    explanation["pattern_name"] = result.analysis_explanation.pattern_name
+                    # Add all possible fields
+                    optional_fields = {
+                        'pattern_name': None,
+                        'pattern': None,
+                        'validation_result': None,
+                        'score_context_improvement': None,
+                        'score': None,
+                        'supportive_context_word': None,
+                        'textual_explanation': None
+                    }
 
-                # Add regex pattern if available
-                if hasattr(result.analysis_explanation, 'pattern') and result.analysis_explanation.pattern:
-                    explanation["pattern"] = result.analysis_explanation.pattern
-
-                # Add validation result if available
-                if hasattr(result.analysis_explanation, 'validation_result') and result.analysis_explanation.validation_result is not None:
-                    explanation["validation_result"] = result.analysis_explanation.validation_result
-
-                # Add score context improvement if available
-                if hasattr(result.analysis_explanation, 'score_context_improvement') and result.analysis_explanation.score_context_improvement:
-                    explanation["score_context_improvement"] = result.analysis_explanation.score_context_improvement
-
-                # Add score (before final adjustments) if available
-                if hasattr(result.analysis_explanation, 'score') and result.analysis_explanation.score is not None:
-                    explanation["score"] = result.analysis_explanation.score
-
-                # Add supportive context word if available
-                if hasattr(result.analysis_explanation, 'supportive_context_word') and result.analysis_explanation.supportive_context_word:
-                    explanation["supportive_context_word"] = result.analysis_explanation.supportive_context_word
+                    for field, default in optional_fields.items():
+                        if hasattr(result.analysis_explanation, field):
+                            value = getattr(result.analysis_explanation, field, default)
+                            if value is not None:
+                                explanation[field] = value
 
                 finding["analysis_explanation"] = explanation
 
